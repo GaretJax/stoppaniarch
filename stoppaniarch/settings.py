@@ -9,37 +9,76 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
 import os
-import dj_database_url
+import sys
+import signal
+from functools import partial
 
+import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
+
+
+# Helpers
+
+required = object()
+
+
+def getenv(env, default=required, process=None):
+    try:
+        val = os.environ[env]
+        return process(val) if process else val
+    except KeyError:
+        if default is required:
+            raise ImproperlyConfigured(
+                'Could not find the {} environment variable.'.format(env))
+        return default
+
+getbool = partial(getenv, process=lambda v: v.lower() in ('1', 'yes', 'true'))
+getint = partial(getenv, process=int)
 gettext = lambda s: s
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+if getbool('DOCKER', False):
+    # Signal handler to trap SIGTERM signals sent by `docker stop` and
+    # "gracefully" shutting down the server. Only installed when run inside
+    # a docker container which explicitly sets the DOCKER environment
+    # variable to 1.
+    signal.signal(signal.SIGTERM, lambda _1, _2: sys.exit)
 
-SECRET_KEY = 'cu!2w-9##low7w6c@qu#w0rxmjjmn1+dwzwi*1c1+cs51v5%2-'
 
-DEBUG = True
-TEMPLATE_DEBUG = True
+# Dynamic configuration
+
+SECRET_KEY = getenv('SECRET_KEY')
+
+DATA_DIR = getenv('DATA_DIR', os.path.dirname(os.path.dirname(__file__)))
+
+DEBUG = getbool('DEBUG', False)
+TEMPLATE_DEBUG = getbool('TEMPLATE_DEBUG', DEBUG)
+
+DATABASES = {
+    'default': dj_database_url.config(default='sqlite:///project.db')
+}
+
+SITE_ID = getint('SITE_ID', 1)
+
+TIME_ZONE = getenv('TIME_ZONE', 'Europe/Zurich')
 
 ALLOWED_HOSTS = []
 
-SITE_ID = 1
+
+# Static configuration
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 ROOT_URLCONF = 'stoppaniarch.urls'
 
 WSGI_APPLICATION = 'stoppaniarch.wsgi.application'
 
-LANGUAGE_CODE = 'it'
-
-USE_I18N = True
-USE_L10N = True
-
-TIME_ZONE = 'Europe/Zurich'
 USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_ROOT = os.path.join(DATA_DIR, 'media')
+STATIC_ROOT = os.path.join(DATA_DIR, 'static')
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'stoppaniarch', 'static'),
@@ -114,6 +153,11 @@ INSTALLED_APPS = (
     'stoppaniarch'
 )
 
+USE_I18N = True
+USE_L10N = True
+
+LANGUAGE_CODE = 'it'
+
 LANGUAGES = (
     ('it', gettext('italian')),
     ('de', gettext('german')),
@@ -168,7 +212,3 @@ CMS_TEMPLATES = (
 CMS_PERMISSION = False
 
 CMS_PLACEHOLDER_CONF = {}
-
-DATABASES = {
-    'default': dj_database_url.config(default='sqlite:///project.db')
-}

@@ -8,6 +8,7 @@ baseconfig: &BASE
     - DJANGO_SETTINGS_MODULE=stoppaniarch.settings
     - DOCKER=1
     - DATABASE_URL=postgres://postgres:root@db/stoppaniarch
+    - DEBUG=1
   ports:
     - "80:8000"
   links:
