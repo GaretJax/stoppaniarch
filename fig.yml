@@ -1,0 +1,53 @@
+# Base configuration
+base:
+  build: .
+
+baseconfig: &BASE
+  image: stoppaniarch_base
+  environment:
+    - DJANGO_SETTINGS_MODULE=stoppaniarch.settings
+    - DOCKER=1
+    - DATABASE_URL=postgres://postgres:root@db/stoppaniarch
+  ports:
+    - "80:8000"
+  links:
+    - db
+  volumes:
+    - .:/usr/src/app
+
+django: &DJANGO
+  # You can setup a shell alias in the following way:
+  #
+  #    alias dj="fig run django"
+  #
+  # And then you can just call `dj migrate` etc. to run Django commands
+  # inside a properly setup container.
+  <<: *BASE
+  entrypoint: ./manage.py
+
+
+# Backing services
+db:
+  image: postgres:9.3
+  volumes_from:
+    - webrepublic-postgres-data
+  ports:
+    - "5432:5432"
+
+app:
+  <<: *DJANGO
+  command: runserver 0.0.0.0:8000
+
+
+# Utilities (to be moved out of here)
+shell:
+  <<: *BASE
+  entrypoint: /bin/bash
+
+css:
+  image: assets
+  working_dir: /src
+  volumes:
+    - .:/src
+  command: make css
+  user: "1000:1000"
