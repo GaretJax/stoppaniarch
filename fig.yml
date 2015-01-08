@@ -41,6 +41,12 @@ app:
 
 
 # Utilities (to be moved out of here)
+debug:
+  <<: *BASE
+  links:
+    - app
+  command: ["python", "-c", "import epdb; epdb.connect('app')"]
+
 shell:
   <<: *BASE
   entrypoint: /bin/bash
