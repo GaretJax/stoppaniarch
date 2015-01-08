@@ -7,15 +7,10 @@ django-reversion==1.8.5
 django-sekizai==0.8.1
 djangocms-admin-style==0.2.5
 djangocms-column==1.5
-djangocms-file==0.1
-djangocms-flash==0.1
 djangocms-googlemap==0.2
 djangocms-inherit==0.1
 djangocms-installer==0.6.0
-djangocms-link==1.5
-djangocms-picture==0.1
 djangocms-style==1.5
-djangocms-teaser==0.1
 djangocms-text-ckeditor==2.4.3
 djangocms-video==0.1
 html5lib==0.999
@@ -25,3 +20,10 @@ pytz==2014.10
 requests==2.5.1
 six==1.9.0
 South==1.0.2
+django-filer==0.9.8
+easy-thumbnails==2.2
+Unidecode==0.4.17
+cmsplugin-filer==0.10.1
+django-polymorphic==0.6.1
+django-admin-sortable2==0.3.2
+django-parler==1.2.1

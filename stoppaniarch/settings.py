@@ -138,19 +138,26 @@ INSTALLED_APPS = (
     'mptt',
     'menus',
     'sekizai',
+    'filer',
+    'easy_thumbnails',
+    'cmsplugin_filer_image',
+    'cmsplugin_filer_file',
+    'cmsplugin_filer_folder',
+    'cmsplugin_filer_link',
+    'cmsplugin_filer_teaser',
+    'cmsplugin_filer_utils',
+    'cmsplugin_filer_video',
     'djangocms_style',
     'djangocms_column',
-    'djangocms_file',
-    'djangocms_flash',
     'djangocms_googlemap',
     'djangocms_inherit',
-    'djangocms_link',
-    'djangocms_picture',
-    'djangocms_teaser',
-    'djangocms_video',
     'south',
     'reversion',
-    'stoppaniarch'
+    'adminsortable',
+    'parler',
+
+    'stoppaniarch',
+    'stoppaniarch.projects',
 )
 
 USE_I18N = True
@@ -164,6 +171,14 @@ LANGUAGES = (
     ('fr', gettext('french')),
     ('en', gettext('english')),
 )
+
+PARLER_LANGUAGES = {
+    SITE_ID: [{'code': c[0]} for c in LANGUAGES],
+    'default': {
+        'fallback': LANGUAGE_CODE,
+        'hide_untranslated': False,
+    }
+}
 
 CMS_LANGUAGES = {
     'default': {
@@ -212,3 +227,14 @@ CMS_TEMPLATES = (
 CMS_PERMISSION = False
 
 CMS_PLACEHOLDER_CONF = {}
+
+THUMBNAIL_PROCESSORS = (
+    'easy_thumbnails.processors.colorspace',
+    'easy_thumbnails.processors.autocrop',
+    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+    'easy_thumbnails.processors.filters'
+)
+
+SOUTH_MIGRATION_MODULES = {
+    'easy_thumbnails': 'easy_thumbnails.south_migrations'
+}
