@@ -1,0 +1,11 @@
+{% load thumbnail %}
+
+<ul>
+    {% for prj in projects %}
+        <li>
+            {% thumbnail prj.thumbnail 100x100 as thumb %}
+            <img src="{{ thumb.url }}" width="{{ thumb.width }}" height="{{ thumb.height }}" />
+            {{ prj.title }}
+        </li>
+    {% endfor %}
+</ul>
