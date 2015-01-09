@@ -1,4 +1,4 @@
-{% load cms_tags menu_tags sekizai_tags %}
+{% load cms_tags menu_tags sekizai_tags static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,5 +25,6 @@
     {% endblock content %}
 </div>
 {% render_block "js" %}
+    <script async="" src="/browser-sync/browser-sync-client.1.8.3.js"></script>
 </body>
 </html>

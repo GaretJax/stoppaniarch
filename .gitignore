@@ -1,3 +1,4 @@
 media
 static
 *.pyc
+.sass-cache
